@@ -45,3 +45,39 @@ dotnet ef database update
 ```text
 dotnet run
 ```
+
+## 🔁 Rotas Disponíveis (via Swagger)
+
+
+### 🔹 MotoController
+
+| Método | Rota                            | Descrição                          |
+|--------|----------------------------------|-------------------------------------|
+| GET    | `/api/moto`                     | Lista todas as motos                |
+| GET    | `/api/moto/{id}`                | Busca uma moto por ID               |
+| GET    | `/api/moto/search?placa=XXX`    | Busca motos por placa (parcial)     |
+| POST   | `/api/moto`                     | Cadastra uma nova moto              |
+| PUT    | `/api/moto/{id}`                | Atualiza uma moto existente         |
+| DELETE | `/api/moto/{id}`                | Remove uma moto                     |
+
+### 🔹 VagaController
+
+| Método | Rota                                | Descrição                           |
+|--------|-------------------------------------|--------------------------------------|
+| GET    | `/api/vaga`                         | Lista todas as vagas                 |
+| GET    | `/api/vaga/{id}`                    | Busca uma vaga por ID                |
+| GET    | `/api/vaga/patio?patio=XYZ`         | Lista vagas por pátio                |
+| POST   | `/api/vaga`                         | Cadastra uma nova vaga               |
+| PUT    | `/api/vaga/{id}`                    | Atualiza uma vaga existente          |
+| DELETE | `/api/vaga/{id}`                    | Remove uma vaga                      |
+
+---
+
+## 🧾 Consulta no banco Oracle
+
+Para visualizar os dados diretamente no Oracle SQL Developer, use **aspas nos nomes das tabelas**:
+
+```sql
+SELECT * FROM "Moto";
+SELECT * FROM "Vaga";
+
