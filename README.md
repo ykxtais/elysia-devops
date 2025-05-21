@@ -17,31 +17,31 @@ Taís Tavares Alves - 557553 - 2TDSPM
 - Clean Architecture (camadas Domain, Infrastructure, Application)
 ```
 
-1. Clone o repositório
+### 1. Clone o repositório
 ```text
 https://github.com/Irissuu/cp2sharp.git
 cd ElysiaAPI
 ```
 
-2. Configure a string de conexão
+### 2. Configure a string de conexão
 ```text
 "ConnectionStrings": {
   "OracleDB": "User Id=SEU_USUARIO;Password=SUA_SENHA;Data Source=oracle.fiap.com.br:1521/orcl;"
 }
 ```
 
-3. Instale os pacotes
+### 3. Instale os pacotes
 ```text
 dotnet restore
 ```
 
-4. Gere o banco de dados com EF Core
+### 4. Gere o banco de dados com EF Core
 ```text
 dotnet ef migrations add Inicial
 dotnet ef database update
 ```
 
-5. Execute o projeto
+### 5. Execute o projeto
 ```text
 dotnet run
 ```
