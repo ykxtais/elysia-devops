@@ -19,7 +19,7 @@ Taís Tavares Alves - 557553 - 2TDSPM
 
 ### 1. Clone o repositório
 ```text
-git clone 
+git clone https://github.com/Irissuu/challenge_csharp.git
 cd ElysiaAPI
 ```
 
