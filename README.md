@@ -19,7 +19,7 @@ Taís Tavares Alves - 557553 - 2TDSPM
 
 ### 1. Clone o repositório
 ```text
-https://github.com/Irissuu/cp2sharp.git
+git clone 
 cd ElysiaAPI
 ```
 
