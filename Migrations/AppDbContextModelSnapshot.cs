@@ -16,7 +16,7 @@ namespace ElysiaAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -44,12 +44,12 @@ namespace ElysiaAPI.Migrations
 
                     b.Property<string>("Placa")
                         .IsRequired()
-                        .HasMaxLength(7)
-                        .HasColumnType("NVARCHAR2(7)");
+                        .HasMaxLength(8)
+                        .HasColumnType("NVARCHAR2(8)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Moto", (string)null);
+                    b.ToTable("MotoCsharp", (string)null);
                 });
 
             modelBuilder.Entity("ElysiaAPI.Domain.Entity.Vaga", b =>
@@ -75,7 +75,11 @@ namespace ElysiaAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Vaga", (string)null);
+                    b.HasIndex("Patio", "Numero")
+                        .IsUnique()
+                        .HasDatabaseName("UK_Vaga_Patio_Numero");
+
+                    b.ToTable("VagaCsharp", (string)null);
                 });
 #pragma warning restore 612, 618
         }

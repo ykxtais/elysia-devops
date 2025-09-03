@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ElysiaAPI.Domain.Entity;
+using ElysiaAPI.Domain.ValueObjects;
 
 namespace ElysiaAPI.Infrastructure.Mappings
 {
@@ -8,26 +9,18 @@ namespace ElysiaAPI.Infrastructure.Mappings
     {
         public void Configure(EntityTypeBuilder<Moto> builder)
         {
-            builder.ToTable("Moto");
-
+            builder.ToTable("MotoCsharp");
             builder.HasKey(m => m.Id);
-
-            builder.Property(m => m.Id)
-                   .ValueGeneratedOnAdd(); 
+            builder.Property(m => m.Id).ValueGeneratedOnAdd();
 
             builder.Property(m => m.Placa)
-                   .HasMaxLength(7); 
+                .HasConversion(v => v.Value, s => Placa.Create(s))
+                .HasMaxLength(8)
+                .IsRequired();
 
-            builder.Property(m => m.Marca)
-                   .IsRequired()
-                   .HasMaxLength(50);
-
-            builder.Property(m => m.Modelo)
-                   .IsRequired()
-                   .HasMaxLength(50);
-
-            builder.Property(m => m.Ano)
-                   .IsRequired();
+            builder.Property(m => m.Marca).IsRequired().HasMaxLength(50);
+            builder.Property(m => m.Modelo).IsRequired().HasMaxLength(50);
+            builder.Property(m => m.Ano).IsRequired();
         }
     }
 }
