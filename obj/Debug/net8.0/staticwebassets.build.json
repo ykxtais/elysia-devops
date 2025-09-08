@@ -1,12 +1,11 @@
 {
   "Version": 1,
-  "Hash": "jkvchbtKcPHRfdSlf3fpf6NjQlPfTFCv4SX+44sJNx4=",
+  "Hash": "d1zECyk36V3vIUmu25Yn1t3uriVXLFl11ecIFrNeVco=",
   "Source": "ElysiaAPI",
   "BasePath": "_content/ElysiaAPI",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
+  "Assets": []
 }

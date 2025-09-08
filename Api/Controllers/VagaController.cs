@@ -13,8 +13,7 @@ namespace ElysiaAPI.Controllers
     {
         private readonly AppDbContext _context;
         public VagaController(AppDbContext context) => _context = context;
-
-        // mapper DRY
+        
         private static VagaResponse ToResponse(Vaga v) => new()
         {
             Id = v.Id,
@@ -22,13 +21,37 @@ namespace ElysiaAPI.Controllers
             Numero = v.Numero,
             Patio = v.Patio
         };
-
+        
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<VagaResponse>), 200)]
-        public async Task<ActionResult<IEnumerable<VagaResponse>>> GetVagas()
+        [ProducesResponseType(typeof(object), 200)]
+        public async Task<ActionResult<object>> GetVagas(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            CancellationToken ct = default)
         {
-            var vagas = await _context.Vagas.AsNoTracking().ToListAsync();
-            return Ok(vagas.Select(ToResponse));
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+            if (pageSize > 100) pageSize = 100;
+
+            var query = _context.Vagas.AsNoTracking().OrderBy(v => v.Id);
+
+            var total = await query.CountAsync(ct);
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(v => ToResponse(v))
+                .ToListAsync(ct);
+
+            var totalPages = total == 0 ? 0 : (int)Math.Ceiling(total / (double)pageSize);
+
+            return Ok(new
+            {
+                page,
+                pageSize,
+                total,
+                totalPages,
+                items
+            });
         }
 
         [HttpGet("{id:int}")]
@@ -40,17 +63,42 @@ namespace ElysiaAPI.Controllers
             if (vaga == null) return NotFound();
             return Ok(ToResponse(vaga));
         }
-
+        
         [HttpGet("patio")]
-        [ProducesResponseType(typeof(IEnumerable<VagaResponse>), 200)]
-        public async Task<ActionResult<IEnumerable<VagaResponse>>> GetVagasByPatio([FromQuery] string patio)
+        [ProducesResponseType(typeof(object), 200)]
+        public async Task<ActionResult<object>> GetVagasByPatio(
+            [FromQuery] string patio,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            CancellationToken ct = default)
         {
-            var p = (patio ?? string.Empty).Trim();
-            var vagas = await _context.Vagas.AsNoTracking()
-                .Where(v => v.Patio == p)
-                .ToListAsync();
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+            if (pageSize > 100) pageSize = 100;
 
-            return Ok(vagas.Select(ToResponse));
+            var p = (patio ?? string.Empty).Trim();
+
+            var query = _context.Vagas.AsNoTracking()
+                .Where(v => v.Patio == p)
+                .OrderBy(v => v.Id);
+
+            var total = await query.CountAsync(ct);
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(v => ToResponse(v))
+                .ToListAsync(ct);
+
+            var totalPages = total == 0 ? 0 : (int)Math.Ceiling(total / (double)pageSize);
+
+            return Ok(new
+            {
+                page,
+                pageSize,
+                total,
+                totalPages,
+                items
+            });
         }
 
         [HttpPost]

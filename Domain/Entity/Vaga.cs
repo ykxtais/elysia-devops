@@ -1,5 +1,4 @@
-﻿// Domain/Entity/Vaga.cs
-namespace ElysiaAPI.Domain.Entity
+﻿namespace ElysiaAPI.Domain.Entity
 {
     public class Vaga
     {

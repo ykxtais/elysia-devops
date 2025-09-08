@@ -1,5 +1,4 @@
-﻿// Domain/Entity/Moto.cs
-using ElysiaAPI.Domain.ValueObjects;
+﻿using ElysiaAPI.Domain.ValueObjects;
 
 namespace ElysiaAPI.Domain.Entity
 {
