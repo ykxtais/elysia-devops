@@ -70,6 +70,16 @@ dotnet run
 | PUT    | `/api/vaga/{id}`                    | Atualiza uma vaga existente          |
 | DELETE | `/api/vaga/{id}`                    | Remove uma vaga                      |
 
+### 🔹 UsuarioController
+
+| Método | Rota                                | Descrição                           |
+|--------|-------------------------------------|--------------------------------------|
+| GET    | `/api/usuario`                         | Lista todas os usuarios                 |
+| GET    | `/api/usuario/{id}`                    | Busca um usuario por ID                |
+| POST   | `/api/usuario`                         | Cadastra um novo usuario             |
+| PUT    | `/api/usuario/{id}`                    | Atualiza um usuarioexistente          |
+| DELETE | `/api/usuario/{id}`                    | Remove um usuario                    |
+
 ---
 
 ## 🧾 Consulta no banco Oracle
@@ -77,6 +87,7 @@ dotnet run
 Para visualizar os dados diretamente no Oracle SQL Developer, use **aspas nos nomes das tabelas**:
 
 ```sql
-SELECT * FROM "Moto";
-SELECT * FROM "Vaga";
+SELECT * FROM "MotoCsharp";
+SELECT * FROM "VagaCsharp";
+SELECT * FROM "UsuarioCsharp";
 
