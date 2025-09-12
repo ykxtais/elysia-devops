@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ElysiaAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cb8b2c92d8a1c65d6ff93565772acac12222e2cc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9853d6bc1c5379a7a641a187a0473c438a0bf79f")]
 [assembly: System.Reflection.AssemblyProductAttribute("ElysiaAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ElysiaAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

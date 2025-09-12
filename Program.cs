@@ -19,13 +19,16 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Elysia API",
         Version = "v1",
-        Description = "API do Checkpoint 4 — Clean Architecture, DDD e Clean Code"
+        Description = "API Challenge"
     });
     
+    c.EnableAnnotations();
+
     var xmlPath = Path.Combine(AppContext.BaseDirectory, "ElysiaAPI.xml");
     if (File.Exists(xmlPath))
         c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
 });
+
 
 var app = builder.Build();
 
