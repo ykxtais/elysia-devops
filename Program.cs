@@ -9,7 +9,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 builder.Services.AddControllers();
-
 builder.Services.AddRouting(o => o.LowercaseUrls = true);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -29,15 +28,25 @@ builder.Services.AddSwaggerGen(c =>
         c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
 });
 
-
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Elysia API v1");
-    c.RoutePrefix = "swagger"; // /swagger
+    c.SwaggerEndpoint("v1/swagger.json", "Elysia API v1");
+    c.RoutePrefix = "swagger";
 });
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
+
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

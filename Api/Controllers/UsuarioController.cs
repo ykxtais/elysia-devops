@@ -4,9 +4,11 @@ using ElysiaAPI.Application.DTOs.Hateoas;
 using ElysiaAPI.Domain.Entity;
 using ElysiaAPI.Infrastructure.Context;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ElysiaAPI.Controllers
 {
+    /// <summary>Endpoints para gerenciamento de usuários.</summary>
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
@@ -31,18 +33,15 @@ namespace ElysiaAPI.Controllers
             var update = Url.Link(nameof(UpdateUsuario), new { id = r.Id });
             var delete = Url.Link(nameof(DeleteUsuario), new { id = r.Id });
 
-            if (self   is not null)   r.Links.Add(new Link("self",   self));               // GET
-            if (update is not null)   r.Links.Add(new Link("update", update, "PUT"));      // PUT
-            if (delete is not null)   r.Links.Add(new Link("delete", delete, "DELETE"));   // DELETE
+            if (self   is not null) r.Links.Add(new Link("self",   self,   "GET"));
+            if (update is not null) r.Links.Add(new Link("update", update, "PUT"));
+            if (delete is not null) r.Links.Add(new Link("delete", delete, "DELETE"));
 
             return r;
         }
 
         /// <summary>Busca um usuário por ID.</summary>
-        /// <param name="id">Identificador do usuário.</param>
-        /// <returns>Usuário com links HATEOAS.</returns>
-        /// <response code="200">Usuário encontrado.</response>
-        /// <response code="404">Usuário não encontrado.</response>
+        [SwaggerOperation(Summary = "Busca um usuário por ID")]
         [HttpGet("{id:int}", Name = nameof(GetUsuario))]
         [ProducesResponseType(typeof(UsuarioResponse), 200)]
         [ProducesResponseType(404)]
@@ -54,10 +53,7 @@ namespace ElysiaAPI.Controllers
         }
 
         /// <summary>Cadastra um novo usuário.</summary>
-        /// <param name="request">Nome, Email, Senha, Cpf.</param>
-        /// <returns>Usuário criado com links HATEOAS.</returns>
-        /// <response code="201">Criado com sucesso.</response>
-        /// <response code="400">Dados inválidos.</response>
+        [SwaggerOperation(Summary = "Cadastra um novo usuário")]
         [HttpPost]
         [ProducesResponseType(typeof(UsuarioResponse), 201)]
         [ProducesResponseType(400)]
@@ -77,11 +73,7 @@ namespace ElysiaAPI.Controllers
         }
 
         /// <summary>Atualiza um usuário existente.</summary>
-        /// <param name="id">Id do usuário.</param>
-        /// <param name="request">Nome, Email, Senha, Cpf.</param>
-        /// <response code="204">Atualizado com sucesso.</response>
-        /// <response code="400">Dados inválidos.</response>
-        /// <response code="404">Usuário não encontrado.</response>
+        [SwaggerOperation(Summary = "Atualiza um usuário existente")]
         [HttpPut("{id:int}", Name = nameof(UpdateUsuario))]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -102,10 +94,8 @@ namespace ElysiaAPI.Controllers
             catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
         }
 
-        /// <summary>Remove um usuário.</summary>
-        /// <param name="id">Id do usuário.</param>
-        /// <response code="204">Removido com sucesso.</response>
-        /// <response code="404">Usuário não encontrado.</response>
+        /// <summary>Remove um usuário por ID.</summary>
+        [SwaggerOperation(Summary = "Remove um usuário")]
         [HttpDelete("{id:int}", Name = nameof(DeleteUsuario))]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]

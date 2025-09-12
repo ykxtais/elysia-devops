@@ -5,11 +5,13 @@ using ElysiaAPI.Domain.Entity;
 using ElysiaAPI.Infrastructure.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ElysiaAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Produces("application/json")]
     public class VagaController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -41,10 +43,7 @@ namespace ElysiaAPI.Controllers
         private List<Link> CollectionLinks(string routeName, int page, int pageSize, int total, string? patio = null)
         {
             var totalPages = total == 0 ? 0 : (int)Math.Ceiling(total / (double)pageSize);
-
-            object Params(int p) => patio is null
-                ? new { page = p, pageSize }
-                : new { patio, page = p, pageSize };
+            object Params(int p) => patio is null ? new { page = p, pageSize } : new { patio, page = p, pageSize };
 
             var links = new List<Link> { new("self", Url.Link(routeName, Params(page))!) };
             if (page > 1)          links.Add(new("prev", Url.Link(routeName, Params(page - 1))!));
@@ -53,28 +52,22 @@ namespace ElysiaAPI.Controllers
         }
 
         /// <summary>Lista paginada de vagas.</summary>
-        /// <param name="page">Página.</param>
-        /// <param name="pageSize">Itens por página (1..100).</param>
-        /// <returns>Paginação, itens e links HATEOAS.</returns>
+        [SwaggerOperation(Summary = "Lista vagas paginadas")]
         [HttpGet(Name = nameof(GetVagas))]
         [ProducesResponseType(typeof(object), 200)]
-        public ActionResult<object> GetVagas(
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10)
+        public ActionResult<object> GetVagas([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
             if (pageSize > 100) pageSize = 100;
 
-            var query = _context.Vagas
-                .AsNoTracking()
-                .OrderBy(v => v.Id);
+            var query = _context.Vagas.AsNoTracking().OrderBy(v => v.Id);
 
             var total = query.Count();
             var items = query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Select(v => ToResponse(v))
+                .Select(ToResponse)
                 .ToList();
 
             var totalPages = total == 0 ? 0 : (int)Math.Ceiling(total / (double)pageSize);
@@ -91,7 +84,7 @@ namespace ElysiaAPI.Controllers
         }
 
         /// <summary>Obtém uma vaga por ID.</summary>
-        /// <param name="id">Identificador da vaga.</param>
+        [SwaggerOperation(Summary = "Busca vaga por ID")]
         [HttpGet("{id:int}", Name = nameof(GetVaga))]
         [ProducesResponseType(typeof(VagaResponse), 200)]
         [ProducesResponseType(404)]
@@ -103,15 +96,10 @@ namespace ElysiaAPI.Controllers
         }
 
         /// <summary>Lista paginada de vagas filtrando por pátio.</summary>
-        /// <param name="patio">Nome do pátio.</param>
-        /// <param name="page">Página.</param>
-        /// <param name="pageSize">Itens por página (1..100).</param>
+        [SwaggerOperation(Summary = "Lista vagas por pátio (paginado)")]
         [HttpGet("patio", Name = nameof(GetVagasByPatio))]
         [ProducesResponseType(typeof(object), 200)]
-        public ActionResult<object> GetVagasByPatio(
-            [FromQuery] string patio,
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10)
+        public ActionResult<object> GetVagasByPatio([FromQuery] string patio, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
@@ -119,8 +107,7 @@ namespace ElysiaAPI.Controllers
 
             var p = (patio ?? string.Empty).Trim();
 
-            var query = _context.Vagas
-                .AsNoTracking()
+            var query = _context.Vagas.AsNoTracking()
                 .Where(v => v.Patio == p)
                 .OrderBy(v => v.Id);
 
@@ -128,7 +115,7 @@ namespace ElysiaAPI.Controllers
             var items = query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Select(v => ToResponse(v))
+                .Select(ToResponse)
                 .ToList();
 
             var totalPages = total == 0 ? 0 : (int)Math.Ceiling(total / (double)pageSize);
@@ -144,7 +131,8 @@ namespace ElysiaAPI.Controllers
             });
         }
 
-        /// <summary>Cria uma nova vaga.</summary>
+        /// <summary>Cadastra uma nova vaga.</summary>
+        [SwaggerOperation(Summary = "Cadastra uma nova vaga")]
         [HttpPost]
         [ProducesResponseType(typeof(VagaResponse), 201)]
         [ProducesResponseType(400)]
@@ -174,6 +162,7 @@ namespace ElysiaAPI.Controllers
         }
 
         /// <summary>Atualiza dados de uma vaga.</summary>
+        [SwaggerOperation(Summary = "Atualiza uma vaga")]
         [HttpPut("{id:int}", Name = nameof(UpdateVaga))]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -201,7 +190,8 @@ namespace ElysiaAPI.Controllers
             }
         }
 
-        /// <summary>Remove uma vaga.</summary>
+        /// <summary>Remove uma vaga por ID.</summary>
+        [SwaggerOperation(Summary = "Remove uma vaga")]
         [HttpDelete("{id:int}", Name = nameof(DeleteVaga))]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]

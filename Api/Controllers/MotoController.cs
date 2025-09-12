@@ -47,29 +47,6 @@ namespace ElysiaAPI.Controllers
         }
 
         /// <summary>Lista motos paginadas.</summary>
-        /// <remarks>
-        /// Parâmetros: <c>page</c> (>=1), <c>pageSize</c> (1–100).  
-        /// **Exemplo de resposta**:
-        /// 
-        /// ```json
-        /// {
-        ///   "page": 1,
-        ///   "pageSize": 10,
-        ///   "total": 2,
-        ///   "totalPages": 1,
-        ///   "items": [
-        ///     { "id": 1, "placa": "KAC7516", "marca": "Honda", "modelo": "CG 160", "ano": 2021,
-        ///       "links": [
-        ///         { "rel": "self", "href": "/api/moto/1", "method": "GET" }
-        ///       ]
-        ///     }
-        ///   ],
-        ///   "_links": [
-        ///     { "rel": "self", "href": "/api/moto?page=1&pageSize=10", "method": "GET" }
-        ///   ]
-        /// }
-        /// ```
-        /// </remarks>
         [HttpGet(Name = nameof(GetMotos))]
         [SwaggerOperation(Summary = "Lista motos paginadas", Description = "Retorna coleção paginada com links HATEOAS.")]
         [SwaggerResponse(200, "Lista paginada retornada com sucesso")]
@@ -100,18 +77,6 @@ namespace ElysiaAPI.Controllers
         }
 
         /// <summary>Busca uma moto por ID.</summary>
-        /// <remarks>
-        /// **Exemplo de resposta**:
-        /// ```json
-        /// { "id": 1, "placa": "KAC7516", "marca": "Honda", "modelo": "CG 160", "ano": 2021,
-        ///   "links": [
-        ///     { "rel": "self", "href": "/api/moto/1", "method": "GET" },
-        ///     { "rel": "update", "href": "/api/moto/1", "method": "PUT" },
-        ///     { "rel": "delete", "href": "/api/moto/1", "method": "DELETE" }
-        ///   ]
-        /// }
-        /// ```
-        /// </remarks>
         [HttpGet("{id:int}", Name = nameof(GetMoto))]
         [SwaggerOperation(Summary = "Busca moto por ID", Description = "Retorna 404 se a moto não existir.")]
         [SwaggerResponse(200, "Moto encontrada", typeof(MotoResponse))]
@@ -124,18 +89,7 @@ namespace ElysiaAPI.Controllers
             return Ok(WithLinks(ToResponse(moto)));
         }
 
-        /// <summary>Pesquisa motos pela placa (like).</summary>
-        /// <remarks>
-        /// **Exemplo**: <code>/api/moto/search?placa=KAC7516</code>  
-        /// **Exemplo de resposta**:
-        /// ```json
-        /// [
-        ///   { "id": 1, "placa": "KAC7516", "marca": "Honda", "modelo": "CG 160", "ano": 2021,
-        ///     "links": [{ "rel": "self", "href": "/api/moto/1", "method": "GET" }]
-        ///   }
-        /// ]
-        /// ```
-        /// </remarks>
+        /// <summary>Pesquisa motos pela placa.</summary>
         [HttpGet("search", Name = nameof(SearchMoto))]
         [SwaggerOperation(Summary = "Pesquisa por placa", Description = "Busca parcial no valor da placa.")]
         [SwaggerResponse(200, "Lista de motos que correspondem ao filtro", typeof(IEnumerable<MotoResponse>))]
@@ -152,22 +106,10 @@ namespace ElysiaAPI.Controllers
             return Ok(motos.Select(m => WithLinks(ToResponse(m))));
         }
 
-        /// <summary>Cria uma nova moto.</summary>
-        /// <remarks>
-        /// **Exemplo de request**:
-        /// ```json
-        /// { "placa": "KAC7516", "marca": "Honda", "modelo": "CG 160", "ano": 2021 }
-        /// ```
-        /// **Exemplo de response (201)**:
-        /// ```json
-        /// { "id": 1, "placa": "KAC7516", "marca": "Honda", "modelo": "CG 160", "ano": 2021,
-        ///   "links": [{ "rel": "self", "href": "/api/moto/5", "method": "GET" }]
-        /// }
-        /// ```
-        /// </remarks>
+        /// <summary>Cadastra uma nova moto.</summary>
         [HttpPost]
-        [SwaggerOperation(Summary = "Cria uma nova moto", Description = "Valida placa e dados básicos.")]
-        [SwaggerResponse(201, "Moto criada com sucesso", typeof(MotoResponse))]
+        [SwaggerOperation(Summary = "Cadastra uma nova moto", Description = "Valida placa e dados.")]
+        [SwaggerResponse(201, "Moto cadastrada com sucesso", typeof(MotoResponse))]
         [SwaggerResponse(400, "Dados inválidos")]
         public async Task<ActionResult<MotoResponse>> CreateMoto([FromBody] MotoRequest request)
         {
@@ -191,12 +133,6 @@ namespace ElysiaAPI.Controllers
         }
 
         /// <summary>Atualiza uma moto existente.</summary>
-        /// <remarks>
-        /// **Exemplo de request**:
-        /// ```json
-        /// { "placa": "KXH4827", "marca": "Yamaha", "modelo": "Fazer 250", "ano": 2023 }
-        /// ```
-        /// </remarks>
         [HttpPut("{id:int}", Name = nameof(UpdateMoto))]
         [SwaggerOperation(Summary = "Atualiza moto por ID", Description = "Retorna 404 se não existir.")]
         [SwaggerResponse(204, "Atualizado com sucesso")]

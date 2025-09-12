@@ -563,3 +563,4 @@ C:\Users\Usuario\Documents\challenge_csharp\obj\Debug\net8.0\ref\ElysiaAPI.dll
 C:\Users\Usuario\Documents\challenge_csharp\bin\Debug\net8.0\ElysiaAPI.staticwebassets.endpoints.json
 C:\Users\Usuario\Documents\challenge_csharp\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 C:\Users\Usuario\Documents\challenge_csharp\obj\Debug\net8.0\staticwebassets\msbuild.ElysiaAPI.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
+C:\Users\Usuario\Documents\challenge_csharp\bin\Debug\net8.0\Swashbuckle.AspNetCore.Annotations.dll
