@@ -1,5 +1,6 @@
 ﻿using ElysiaAPI.Application.DTOs.Request;
 using ElysiaAPI.Application.DTOs.Response;
+using ElysiaAPI.Application.DTOs.Hateoas; 
 using ElysiaAPI.Domain.Entity;
 using ElysiaAPI.Infrastructure.Context;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,7 @@ namespace ElysiaAPI.Controllers
     {
         private readonly AppDbContext _context;
         public VagaController(AppDbContext context) => _context = context;
-        
+
         private static VagaResponse ToResponse(Vaga v) => new()
         {
             Id = v.Id,
@@ -22,7 +23,37 @@ namespace ElysiaAPI.Controllers
             Patio = v.Patio
         };
         
-        [HttpGet]
+        private VagaResponse WithLinks(VagaResponse r)
+        {
+            r.Links.Clear();
+            r.Links.Add(new Link("self",   Url.Link(nameof(GetVaga),    new { id = r.Id })!));
+            r.Links.Add(new Link("update", Url.Link(nameof(UpdateVaga), new { id = r.Id })!, "PUT"));
+            r.Links.Add(new Link("delete", Url.Link(nameof(DeleteVaga), new { id = r.Id })!, "DELETE"));
+            
+            if (string.Equals(r.Status, "Livre", StringComparison.OrdinalIgnoreCase))
+                r.Links.Add(new Link("ocupar", Url.Link(nameof(UpdateVaga), new { id = r.Id })!, "PUT"));
+            if (string.Equals(r.Status, "Ocupada", StringComparison.OrdinalIgnoreCase))
+                r.Links.Add(new Link("liberar", Url.Link(nameof(UpdateVaga), new { id = r.Id })!, "PUT"));
+
+            return r;
+        }
+
+        private List<Link> CollectionLinks(string routeName, int page, int pageSize, int total,
+                                           string? patio = null)
+        {
+            var totalPages = total == 0 ? 0 : (int)Math.Ceiling(total / (double)pageSize);
+
+            object Params(int p) => patio is null
+                ? new { page = p, pageSize }
+                : new { patio, page = p, pageSize };
+
+            var links = new List<Link> { new("self", Url.Link(routeName, Params(page))!) };
+            if (page > 1)              links.Add(new("prev", Url.Link(routeName, Params(page - 1))!));
+            if (page < totalPages)     links.Add(new("next", Url.Link(routeName, Params(page + 1))!));
+            return links;
+        }
+        
+        [HttpGet(Name = nameof(GetVagas))]
         [ProducesResponseType(typeof(object), 200)]
         public async Task<ActionResult<object>> GetVagas(
             [FromQuery] int page = 1,
@@ -34,7 +65,6 @@ namespace ElysiaAPI.Controllers
             if (pageSize > 100) pageSize = 100;
 
             var query = _context.Vagas.AsNoTracking().OrderBy(v => v.Id);
-
             var total = await query.CountAsync(ct);
             var items = await query
                 .Skip((page - 1) * pageSize)
@@ -50,21 +80,22 @@ namespace ElysiaAPI.Controllers
                 pageSize,
                 total,
                 totalPages,
-                items
+                items = items.Select(WithLinks),
+                _links = CollectionLinks(nameof(GetVagas), page, pageSize, total)
             });
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name = nameof(GetVaga))]
         [ProducesResponseType(typeof(VagaResponse), 200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<VagaResponse>> GetVaga(int id)
         {
             var vaga = await _context.Vagas.FindAsync(id);
             if (vaga == null) return NotFound();
-            return Ok(ToResponse(vaga));
+            return Ok(WithLinks(ToResponse(vaga)));
         }
         
-        [HttpGet("patio")]
+        [HttpGet("patio", Name = nameof(GetVagasByPatio))]
         [ProducesResponseType(typeof(object), 200)]
         public async Task<ActionResult<object>> GetVagasByPatio(
             [FromQuery] string patio,
@@ -97,7 +128,8 @@ namespace ElysiaAPI.Controllers
                 pageSize,
                 total,
                 totalPages,
-                items
+                items = items.Select(WithLinks),
+                _links = CollectionLinks(nameof(GetVagasByPatio), page, pageSize, total, p)
             });
         }
 
@@ -116,7 +148,8 @@ namespace ElysiaAPI.Controllers
                 _context.Vagas.Add(vaga);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(GetVaga), new { id = vaga.Id }, ToResponse(vaga));
+                var resp = WithLinks(ToResponse(vaga));
+                return CreatedAtAction(nameof(GetVaga), new { id = vaga.Id }, resp);
             }
             catch (ArgumentException ex)           { return BadRequest(ex.Message); }
             catch (InvalidOperationException ex)   { return BadRequest(ex.Message); }
@@ -129,7 +162,7 @@ namespace ElysiaAPI.Controllers
             }
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:int}", Name = nameof(UpdateVaga))]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -157,7 +190,7 @@ namespace ElysiaAPI.Controllers
             }
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}", Name = nameof(DeleteVaga))]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteVaga(int id)
