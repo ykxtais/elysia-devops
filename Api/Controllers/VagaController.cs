@@ -1,6 +1,6 @@
 ﻿using ElysiaAPI.Application.DTOs.Request;
 using ElysiaAPI.Application.DTOs.Response;
-using ElysiaAPI.Application.DTOs.Hateoas; 
+using ElysiaAPI.Application.DTOs.Hateoas;
 using ElysiaAPI.Domain.Entity;
 using ElysiaAPI.Infrastructure.Context;
 using Microsoft.AspNetCore.Mvc;
@@ -22,14 +22,14 @@ namespace ElysiaAPI.Controllers
             Numero = v.Numero,
             Patio = v.Patio
         };
-        
+
         private VagaResponse WithLinks(VagaResponse r)
         {
             r.Links.Clear();
             r.Links.Add(new Link("self",   Url.Link(nameof(GetVaga),    new { id = r.Id })!));
             r.Links.Add(new Link("update", Url.Link(nameof(UpdateVaga), new { id = r.Id })!, "PUT"));
             r.Links.Add(new Link("delete", Url.Link(nameof(DeleteVaga), new { id = r.Id })!, "DELETE"));
-            
+
             if (string.Equals(r.Status, "Livre", StringComparison.OrdinalIgnoreCase))
                 r.Links.Add(new Link("ocupar", Url.Link(nameof(UpdateVaga), new { id = r.Id })!, "PUT"));
             if (string.Equals(r.Status, "Ocupada", StringComparison.OrdinalIgnoreCase))
@@ -38,8 +38,7 @@ namespace ElysiaAPI.Controllers
             return r;
         }
 
-        private List<Link> CollectionLinks(string routeName, int page, int pageSize, int total,
-                                           string? patio = null)
+        private List<Link> CollectionLinks(string routeName, int page, int pageSize, int total, string? patio = null)
         {
             var totalPages = total == 0 ? 0 : (int)Math.Ceiling(total / (double)pageSize);
 
@@ -48,29 +47,35 @@ namespace ElysiaAPI.Controllers
                 : new { patio, page = p, pageSize };
 
             var links = new List<Link> { new("self", Url.Link(routeName, Params(page))!) };
-            if (page > 1)              links.Add(new("prev", Url.Link(routeName, Params(page - 1))!));
-            if (page < totalPages)     links.Add(new("next", Url.Link(routeName, Params(page + 1))!));
+            if (page > 1)          links.Add(new("prev", Url.Link(routeName, Params(page - 1))!));
+            if (page < totalPages) links.Add(new("next", Url.Link(routeName, Params(page + 1))!));
             return links;
         }
-        
+
+        /// <summary>Lista paginada de vagas.</summary>
+        /// <param name="page">Página.</param>
+        /// <param name="pageSize">Itens por página (1..100).</param>
+        /// <returns>Paginação, itens e links HATEOAS.</returns>
         [HttpGet(Name = nameof(GetVagas))]
         [ProducesResponseType(typeof(object), 200)]
-        public async Task<ActionResult<object>> GetVagas(
+        public ActionResult<object> GetVagas(
             [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10,
-            CancellationToken ct = default)
+            [FromQuery] int pageSize = 10)
         {
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
             if (pageSize > 100) pageSize = 100;
 
-            var query = _context.Vagas.AsNoTracking().OrderBy(v => v.Id);
-            var total = await query.CountAsync(ct);
-            var items = await query
+            var query = _context.Vagas
+                .AsNoTracking()
+                .OrderBy(v => v.Id);
+
+            var total = query.Count();
+            var items = query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(v => ToResponse(v))
-                .ToListAsync(ct);
+                .ToList();
 
             var totalPages = total == 0 ? 0 : (int)Math.Ceiling(total / (double)pageSize);
 
@@ -85,6 +90,8 @@ namespace ElysiaAPI.Controllers
             });
         }
 
+        /// <summary>Obtém uma vaga por ID.</summary>
+        /// <param name="id">Identificador da vaga.</param>
         [HttpGet("{id:int}", Name = nameof(GetVaga))]
         [ProducesResponseType(typeof(VagaResponse), 200)]
         [ProducesResponseType(404)]
@@ -94,14 +101,17 @@ namespace ElysiaAPI.Controllers
             if (vaga == null) return NotFound();
             return Ok(WithLinks(ToResponse(vaga)));
         }
-        
+
+        /// <summary>Lista paginada de vagas filtrando por pátio.</summary>
+        /// <param name="patio">Nome do pátio.</param>
+        /// <param name="page">Página.</param>
+        /// <param name="pageSize">Itens por página (1..100).</param>
         [HttpGet("patio", Name = nameof(GetVagasByPatio))]
         [ProducesResponseType(typeof(object), 200)]
-        public async Task<ActionResult<object>> GetVagasByPatio(
+        public ActionResult<object> GetVagasByPatio(
             [FromQuery] string patio,
             [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 10,
-            CancellationToken ct = default)
+            [FromQuery] int pageSize = 10)
         {
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
@@ -109,16 +119,17 @@ namespace ElysiaAPI.Controllers
 
             var p = (patio ?? string.Empty).Trim();
 
-            var query = _context.Vagas.AsNoTracking()
+            var query = _context.Vagas
+                .AsNoTracking()
                 .Where(v => v.Patio == p)
                 .OrderBy(v => v.Id);
 
-            var total = await query.CountAsync(ct);
-            var items = await query
+            var total = query.Count();
+            var items = query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .Select(v => ToResponse(v))
-                .ToListAsync(ct);
+                .ToList();
 
             var totalPages = total == 0 ? 0 : (int)Math.Ceiling(total / (double)pageSize);
 
@@ -133,6 +144,7 @@ namespace ElysiaAPI.Controllers
             });
         }
 
+        /// <summary>Cria uma nova vaga.</summary>
         [HttpPost]
         [ProducesResponseType(typeof(VagaResponse), 201)]
         [ProducesResponseType(400)]
@@ -151,17 +163,17 @@ namespace ElysiaAPI.Controllers
                 var resp = WithLinks(ToResponse(vaga));
                 return CreatedAtAction(nameof(GetVaga), new { id = vaga.Id }, resp);
             }
-            catch (ArgumentException ex)           { return BadRequest(ex.Message); }
-            catch (InvalidOperationException ex)   { return BadRequest(ex.Message); }
+            catch (ArgumentException ex)         { return BadRequest(ex.Message); }
+            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
             catch (DbUpdateException ex) when (
                 (ex.InnerException?.Message?.Contains("ORA-00001") ?? false) ||
-                (ex.InnerException?.Message?.Contains("UNIQUE", StringComparison.OrdinalIgnoreCase) ?? false)
-            )
+                (ex.InnerException?.Message?.Contains("UNIQUE", StringComparison.OrdinalIgnoreCase) ?? false))
             {
                 return Conflict($"Já existe a vaga nº {request.Numero} no pátio '{request.Patio}'.");
             }
         }
 
+        /// <summary>Atualiza dados de uma vaga.</summary>
         [HttpPut("{id:int}", Name = nameof(UpdateVaga))]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -179,17 +191,17 @@ namespace ElysiaAPI.Controllers
                 await _context.SaveChangesAsync();
                 return NoContent();
             }
-            catch (ArgumentException ex)           { return BadRequest(ex.Message); }
-            catch (InvalidOperationException ex)   { return BadRequest(ex.Message); }
+            catch (ArgumentException ex)         { return BadRequest(ex.Message); }
+            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
             catch (DbUpdateException ex) when (
                 (ex.InnerException?.Message?.Contains("ORA-00001") ?? false) ||
-                (ex.InnerException?.Message?.Contains("UNIQUE", StringComparison.OrdinalIgnoreCase) ?? false)
-            )
+                (ex.InnerException?.Message?.Contains("UNIQUE", StringComparison.OrdinalIgnoreCase) ?? false))
             {
                 return Conflict($"Já existe a vaga nº {request.Numero} no pátio '{request.Patio}'.");
             }
         }
 
+        /// <summary>Remove uma vaga.</summary>
         [HttpDelete("{id:int}", Name = nameof(DeleteVaga))]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
