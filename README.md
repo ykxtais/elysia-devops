@@ -15,6 +15,7 @@ Taís Tavares Alves - 557553 - 2TDSPM
 - Oracle Database
 - Swagger (OpenAPI)
 - Clean Architecture (camadas Domain, Infrastructure, Application)
+- Hateoas + Paginação
 ```
 
 ### 1. Clone o repositório
@@ -74,7 +75,6 @@ dotnet run
 
 | Método | Rota                                | Descrição                           |
 |--------|-------------------------------------|--------------------------------------|
-| GET    | `/api/usuario`                         | Lista todas os usuarios                 |
 | GET    | `/api/usuario/{id}`                    | Busca um usuario por ID                |
 | POST   | `/api/usuario`                         | Cadastra um novo usuario             |
 | PUT    | `/api/usuario/{id}`                    | Atualiza um usuarioexistente          |
