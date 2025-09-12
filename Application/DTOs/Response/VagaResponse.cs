@@ -1,4 +1,6 @@
-﻿namespace ElysiaAPI.Application.DTOs.Hateoas
+﻿using ElysiaAPI.Application.DTOs.Hateoas;
+
+namespace ElysiaAPI.Application.DTOs.Response
 {
     public class VagaResponse
     {
