@@ -17,6 +17,7 @@ Taís Tavares Alves - 557553 - 2TDSPM
 - Clean Architecture (camadas Domain, Infrastructure, Application)
 - Hateoas + Paginação
 ```
+## ✔️ Execução do projeto
 
 ### 1. Clone o repositório
 ```text
