@@ -5,7 +5,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseOracle(builder.Configuration.GetConnectionString("OracleDB"))
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresDB"))
 );
 
 builder.Services.AddControllers();
@@ -23,9 +23,6 @@ builder.Services.AddSwaggerGen(c =>
     
     c.EnableAnnotations();
 
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, "ElysiaAPI.xml");
-    if (File.Exists(xmlPath))
-        c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
 });
 
 var app = builder.Build();
@@ -45,11 +42,4 @@ app.UseSwaggerUI(c =>
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-app.Run();
-
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
-
 app.Run();
