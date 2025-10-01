@@ -3,6 +3,14 @@
 Processo completo de deploy da API Elysia em Azure App Service, utilizando .NET 8 e PostgreSQL. </br>
 Inclui os scripts de criação da infraestrutura, publicação via publish.zip, configuração do ambiente e validação da aplicação.
 
+<div align="center">
+  
+| Arquitetura |
+|:--------------------:|
+| <img src="https://github.com/user-attachments/assets/3a45f4e0-352a-4b7f-b876-ebe718c12c28" width="500" height="400" alt="arquitetura" /> |
+
+</div>
+
 ## ⚙️ Pré-requisitos
 - Conta Microsoft Azure.
 - Azure CLI configurado (ou Cloud Shell no portal).
