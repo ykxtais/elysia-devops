@@ -338,7 +338,7 @@ Esse script cria/configura:
 |--------|-------------------------------------|--------------------------------------|
 | GET    | `/api/usuario/{id}`                    | Busca um usuario por ID                |
 | POST   | `/api/usuario`                         | Cadastra um novo usuario             |
-| PUT    | `/api/usuario/{id}`                    | Atualiza um usuarioexistente          |
+| PUT    | `/api/usuario/{id}`                    | Atualiza um usuario existente          |
 | DELETE | `/api/usuario/{id}`                    | Remove um usuario                    |
 
 </br>
@@ -355,6 +355,17 @@ Esse script cria/configura:
   "ano": 2024
 }
 ```
+### PUT Moto — `/api/moto/{id}`
+
+```json
+{
+  "placa": "ABC2D34",
+  "marca": "Yamaha",
+  "modelo": "R3",
+  "ano": 2023
+}
+```
+#
 
 ### POST Usuario — `/api/usuario`
 ```json
@@ -366,11 +377,31 @@ Esse script cria/configura:
 }
 ```
 
+### PUT Usuario — `/api/usuario/{id}`
+```json
+{
+  "nome": "Ian",
+  "email": "ian@email.com",
+  "senha": "Hipnos88",
+  "cpf": "98765432100"
+}
+```
+#
+
 ### POST Vaga — `/api/vaga`
 ```json
 {
   "status": "Livre",
   "numero": 15,
+  "patio": "Externo"
+}
+```
+
+### PUT Vaga — `/api/vaga/{id}`
+```json
+{
+  "status": "Ocupada",
+  "numero": 18,
   "patio": "Externo"
 }
 ```
