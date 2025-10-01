@@ -372,7 +372,7 @@ Esse script cria/configura:
 ## ❗️ Troubleshooting
 
 - Erro 500 no swagger: Verifique `ConnectionStrings__PostgresDB` no App Service
-- `Either './publish' is not a valid local file path or you do not have permissions to access it`: Compactar a pasta antes do deploy:
+- `Either './publish' is not a valid local file path or you do not have permissions to access it`: Verifique se o arquivo está no local correto, caso não esteja, mova-o para dentro da pasta do projeto, caso não seja isso, verifique compactar a pasta antes do deploy:
     - Linux/macOS → `zip -r publish.zip ./publish`
     - Windows (PowerShell) → `Compress-Archive -Path publish\* -DestinationPath publish.zip -Force`
         - Em seguida rode `./appServiceElysia.sh`
