@@ -34,7 +34,7 @@ chmod +x postgresql.sh
 ```
 No Cloud Shell (Bash), execute o script incluso no repositório:
 
-```
+```bash
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -162,7 +162,7 @@ chmod +x appServiceElysia.sh
 ./appServiceElysia.sh
 ```
 No Cloud Shell (Bash), execute o script incluso no repositório:
-```
+```bash
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -224,7 +224,7 @@ Esse script cria/configura:
 - App Service Plan
 - Web App
 - Connection string
-- Zip Deploy do publish.zip
+- Deploy do publish.zip
 
 ### 3.2. Provisionando a Infraestrutura no Azure
 
@@ -234,7 +234,7 @@ chmod +x insightsElysia.sh
 ./insightsElysia.sh
 ```
 No Cloud Shell (Bash), execute o script incluso no repositório:
-```
+```bash
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -298,7 +298,9 @@ Esse script cria/configura:
 ⟢ Acesse o Swagger em: ``` https://elysia-api.azurewebsites.net/swagger ``` </br>
 ⟢ azurewebsites endpoints: ``` https://elysia-api.azurewebsites.net/api/vaga ``` </br> ``` https://elysia-api.azurewebsites.net/api/moto ``` </br> ``` https://elysia-api.azurewebsites.net/api/usuario ```
 
-## Rotas Disponíveis (via Swagger)
+</br>
+
+## 🖇 Rotas Disponíveis (via Swagger)
 
 ### MotoController
 
@@ -331,7 +333,41 @@ Esse script cria/configura:
 | PUT    | `/api/usuario/{id}`                    | Atualiza um usuarioexistente          |
 | DELETE | `/api/usuario/{id}`                    | Remove um usuario                    |
 
-#
+</br>
+
+## 💾 Inserts (Swagger)
+
+### POST Moto — `/api/moto`
+
+```json
+{
+  "placa": "ABC2D34",
+  "marca": "Yamaha",
+  "modelo": "R7",
+  "ano": 2024
+}
+```
+
+### POST Usuario — `/api/usuario`
+```json
+{
+  "nome": "Marina",
+  "email": "mari@email.com",
+  "senha": "Icarus39",
+  "cpf": "98765432109"
+}
+```
+
+### POST Vaga — `/api/vaga`
+```json
+{
+  "status": "Livre",
+  "numero": 15,
+  "patio": "Externo"
+}
+```
+
+</br>
 
 ## ❗️ Troubleshooting
 
@@ -341,6 +377,7 @@ Esse script cria/configura:
     - Windows (PowerShell) → `Compress-Archive -Path publish\* -DestinationPath publish.zip -Force`
         - Em seguida rode `./appServiceElysia.sh`
 
+</br>
 
 # ⟢ Integrantes
 
