@@ -143,6 +143,8 @@ PG_CONN="Host=$PG_HOST;Port=5432;Database=$PG_DB;Username=$PG_APP_USER;Password=
 echo "PG_CONN=\"$PG_CONN\"" > .env.elysia
 echo "connection String salva em ./.env.elysia"
 ```
+- Observação: o CLI não instala psql; aqui assumimos que você roda no Cloud Shell com psql disponível ou em ambiente onde o psql está instalado.
+
 Esse script cria/configura:
 - Resource Group
 - Servidor PostgreSQL
@@ -339,7 +341,6 @@ Esse script cria/configura:
     - Windows (PowerShell) → `Compress-Archive -Path publish\* -DestinationPath publish.zip -Force`
         - Em seguida rode `./appServiceElysia.sh`
 
-#
 
 # ⟢ Integrantes
 
